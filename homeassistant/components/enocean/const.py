@@ -13,3 +13,5 @@ SIGNAL_SEND_MESSAGE = "enocean.send_message"
 LOGGER = logging.getLogger(__package__)
 
 PLATFORMS = ["light", "binary_sensor", "sensor", "switch"]
+
+SWITCH_ALL_CHANNELS = 30

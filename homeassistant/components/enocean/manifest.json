@@ -3,7 +3,7 @@
   "name": "EnOcean",
   "documentation": "https://www.home-assistant.io/integrations/enocean",
   "requirements": [
-    "enocean==0.50"
+    "py-enocean==0.52"
   ],
   "codeowners": [
     "@bdurrer"
