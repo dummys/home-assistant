@@ -6,6 +6,7 @@ from homeassistant.const import (
     CONF_DEVICE_CLASS,
     CONF_ID,
     CONF_NAME,
+    CONF_SENSORS,
     DEVICE_CLASS_HUMIDITY,
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_TEMPERATURE,
@@ -19,6 +20,9 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.restore_state import RestoreEntity
 
 from .device import EnOceanEntity
+from .const import DOMAIN
+from enocean.utils import to_hex_string
+
 
 CONF_MAX_TEMP = "max_temp"
 CONF_MIN_TEMP = "min_temp"
@@ -59,21 +63,46 @@ SENSOR_TYPES = {
     },
 }
 
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_ID): vol.All(cv.ensure_list, [vol.Coerce(int)]),
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_DEVICE_CLASS, default=SENSOR_TYPE_POWER): cv.string,
-        vol.Optional(CONF_MAX_TEMP, default=40): vol.Coerce(int),
-        vol.Optional(CONF_MIN_TEMP, default=0): vol.Coerce(int),
-        vol.Optional(CONF_RANGE_FROM, default=255): cv.positive_int,
-        vol.Optional(CONF_RANGE_TO, default=0): cv.positive_int,
-    }
-)
+SENSOR_SCHEMA_DATA = {
+    vol.Required(CONF_ID): vol.All(cv.ensure_list, [vol.Coerce(int)]),
+    vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+    vol.Optional(CONF_DEVICE_CLASS, default=SENSOR_TYPE_POWER): cv.string,
+    vol.Optional(CONF_MAX_TEMP, default=40): vol.Coerce(int),
+    vol.Optional(CONF_MIN_TEMP, default=0): vol.Coerce(int),
+    vol.Optional(CONF_RANGE_FROM, default=255): cv.positive_int,
+    vol.Optional(CONF_RANGE_TO, default=0): cv.positive_int,
+}
+
+SENSOR_SCHEMA = vol.Schema(SENSOR_SCHEMA_DATA)
+
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SENSOR_SCHEMA_DATA)
 
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up an EnOcean sensor device."""
+    add_entities([create_entity_from_config(config)])
+
+
+async def async_setup_entry(
+    hass,
+    config_entry,
+    async_add_entities,
+):
+    """Set up config entry."""
+
+    # Add cover from config file
+    config_data = config_entry.data
+    entities = []
+    if CONF_SENSORS not in config_data:
+        return
+    for entity_info in config_data[CONF_SENSORS].values():
+        entity = create_entity_from_config(entity_info)
+        entities.append(entity)
+
+    async_add_entities(entities)
+
+
+def create_entity_from_config(config):
     dev_id = config.get(CONF_ID)
     dev_name = config.get(CONF_NAME)
     sensor_type = config.get(CONF_DEVICE_CLASS)
@@ -83,22 +112,18 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         temp_max = config.get(CONF_MAX_TEMP)
         range_from = config.get(CONF_RANGE_FROM)
         range_to = config.get(CONF_RANGE_TO)
-        add_entities(
-            [
-                EnOceanTemperatureSensor(
-                    dev_id, dev_name, temp_min, temp_max, range_from, range_to
-                )
-            ]
+        return EnOceanTemperatureSensor(
+            dev_id, dev_name, temp_min, temp_max, range_from, range_to
         )
 
     elif sensor_type == SENSOR_TYPE_HUMIDITY:
-        add_entities([EnOceanHumiditySensor(dev_id, dev_name)])
+        return EnOceanHumiditySensor(dev_id, dev_name)
 
     elif sensor_type == SENSOR_TYPE_POWER:
-        add_entities([EnOceanPowerSensor(dev_id, dev_name)])
+        return EnOceanPowerSensor(dev_id, dev_name)
 
     elif sensor_type == SENSOR_TYPE_WINDOWHANDLE:
-        add_entities([EnOceanWindowHandle(dev_id, dev_name)])
+        return EnOceanWindowHandle(dev_id, dev_name)
 
 
 class EnOceanSensor(EnOceanEntity, RestoreEntity, SensorEntity):
@@ -152,6 +177,20 @@ class EnOceanSensor(EnOceanEntity, RestoreEntity, SensorEntity):
 
     def value_changed(self, packet):
         """Update the internal state of the sensor."""
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self.unique_id)
+            },
+            "name": self.name,
+        }
+
+    @property
+    def unique_id(self):
+        return "{0}-{1}".format("sensor", to_hex_string(self.dev_id))
 
 
 class EnOceanPowerSensor(EnOceanSensor):
