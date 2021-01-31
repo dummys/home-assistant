@@ -6,7 +6,8 @@
     "py-enocean==0.52"
   ],
   "codeowners": [
-    "@bdurrer"
+    "@bdurrer",
+    "@bakkerv"
   ],
   "config_flow": true
 }
