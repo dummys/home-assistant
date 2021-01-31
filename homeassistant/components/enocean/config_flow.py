@@ -5,12 +5,12 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.config_entries import CONN_CLASS_ASSUMED
 from homeassistant.const import CONF_DEVICE
+from homeassistant.core import callback
 
 from . import dongle
 from .const import DOMAIN  # pylint:disable=unused-import
 from .const import ERROR_INVALID_DONGLE_PATH, LOGGER
 from .options_flow import OptionsFlowHandler
-from homeassistant.core import callback
 
 
 class EnOceanFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):

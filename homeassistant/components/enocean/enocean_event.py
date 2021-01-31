@@ -1,14 +1,14 @@
 """Support for EnOcean buttons"""
-from homeassistant.core import HomeAssistant
+from enocean.utils import to_hex_string
 import voluptuous as vol
 
-from homeassistant.const import CONF_DEVICE_CLASS, CONF_ID, CONF_NAME
-import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
-from enocean.utils import to_hex_string
+from homeassistant.const import CONF_DEVICE_CLASS, CONF_ID, CONF_NAME
+from homeassistant.core import HomeAssistant
+import homeassistant.helpers.config_validation as cv
 
-from .device import EnOceanEntity
 from .const import CONF_EVENTS, DATA_ENOCEAN, DOMAIN, SIGNAL_RECEIVE_MESSAGE
+from .device import EnOceanEntity
 
 DEFAULT_NAME = "EnOcean button"
 EVENT_BUTTON_PRESSED = "button_pressed"
@@ -130,7 +130,7 @@ class EnOceanEvent(EnOceanEntity):
 
     @property
     def unique_id(self):
-        return "{0}-{1}".format("event", to_hex_string(self.dev_id))
+        return f"event-{to_hex_string(self.dev_id)}"
 
     def disconnect(self):
         if self.disconnect_dispatcher != None:

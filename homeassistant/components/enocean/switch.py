@@ -1,17 +1,16 @@
 """Support for EnOcean switches."""
-import voluptuous as vol
 from enocean.protocol.constants import RORG
 from enocean.protocol.packet import RadioPacket
 from enocean.utils import to_hex_string
-
+import voluptuous as vol
 
 from homeassistant.components.switch import PLATFORM_SCHEMA
 from homeassistant.const import CONF_ID, CONF_NAME, CONF_SWITCHES
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import ToggleEntity
 
+from .const import DOMAIN, SWITCH_ALL_CHANNELS
 from .device import EnOceanEntity
-from .const import SWITCH_ALL_CHANNELS, DOMAIN
 
 CONF_CHANNEL = "channel"
 CONF_SENDER_ID = "sender_id"
@@ -154,4 +153,4 @@ class EnOceanSwitch(EnOceanEntity, ToggleEntity):
 
     @property
     def unique_id(self):
-        return "{0}-{1}".format("switch", to_hex_string(self.dev_id))
+        return f"switch-{to_hex_string(self.dev_id)}"

@@ -1,6 +1,7 @@
 """Support for EnOcean light sources."""
 import math
 
+from enocean.utils import to_hex_string
 import voluptuous as vol
 
 from homeassistant.components.light import (
@@ -11,11 +12,9 @@ from homeassistant.components.light import (
 )
 from homeassistant.const import CONF_ID, CONF_LIGHTS, CONF_NAME
 import homeassistant.helpers.config_validation as cv
-from enocean.utils import to_hex_string
 
-
-from .device import EnOceanEntity
 from .const import DOMAIN
+from .device import EnOceanEntity
 
 CONF_SENDER_ID = "sender_id"
 
@@ -147,4 +146,4 @@ class EnOceanLight(EnOceanEntity, LightEntity):
 
     @property
     def unique_id(self):
-        return "{0}-{1}".format("light", to_hex_string(self.dev_id))
+        return f"light-{to_hex_string(self.dev_id)}"
