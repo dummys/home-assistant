@@ -295,9 +295,6 @@ emoji==0.5.4
 # homeassistant.components.emulated_roku
 emulated_roku==0.2.1
 
-# homeassistant.components.enocean
-enocean==0.50
-
 # homeassistant.components.season
 ephem==3.7.7.0
 
@@ -618,6 +615,9 @@ py-august==0.25.2
 
 # homeassistant.components.canary
 py-canary==0.5.1
+
+# homeassistant.components.enocean
+py-enocean==0.52
 
 # homeassistant.components.melissa
 py-melissa-climate==2.1.4
