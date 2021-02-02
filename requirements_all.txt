@@ -556,9 +556,6 @@ emoji==1.2.0
 # homeassistant.components.emulated_roku
 emulated_roku==0.2.1
 
-# homeassistant.components.enocean
-enocean==0.52
-
 # homeassistant.components.entur_public_transport
 enturclient==0.2.2
 
@@ -1235,6 +1232,9 @@ py-canary==0.5.1
 
 # homeassistant.components.cpuspeed
 py-cpuinfo==8.0.0
+
+# homeassistant.components.enocean
+py-enocean==0.52
 
 # homeassistant.components.melissa
 py-melissa-climate==2.1.4

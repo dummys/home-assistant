@@ -688,6 +688,9 @@ pushbullet.py==0.11.0
 # homeassistant.components.canary
 py-canary==0.5.1
 
+# homeassistant.components.enocean
+py-enocean==0.52
+
 # homeassistant.components.melissa
 py-melissa-climate==2.1.4
 
