@@ -1236,9 +1236,6 @@ py-cpuinfo==8.0.0
 # homeassistant.components.enocean
 py-enocean==0.52
 
-# homeassistant.components.enocean
-py-enocean==0.52
-
 # homeassistant.components.melissa
 py-melissa-climate==2.1.4
 
